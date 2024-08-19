@@ -1,0 +1,32 @@
+{% if message.author == user %}
+<div class="d-flex flex-column mb-3 user1bubble">
+    <div class="d-flex align-items-center">
+        <img src="{{message.author.profile.image.url}}" class="rounded-circle" alt="{{message.author.username}}">
+        <strong>{{message.author.username}} :
+        </strong>
+        <small class="text-muted">{{message.created}}</small>
+        <form class="float-end" action="{% url 'deletechat' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="message_id" value="{{message.id}}">
+            <button type="submit" class="deleteform" style="border: none; box-shadow: none;background-color: rgba(255, 228, 196, 0) ;"><i class="fa-solid fa-trash"></i></button>
+        </form>
+    </div>
+    <p>{{message.body}}</p>
+</div>
+{% else %}
+<div class="d-flex flex-column mb-3 user2bubble">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'prof' message.author.username %}"><img src="{{message.author.profile.image.url}}" class="rounded-circle" alt="User 2"></a>
+
+        <strong>{{message.author.username}}
+            {% if message.author.is_superuser %}
+            <small class="text-muted">Admin</small>
+            {% elif message.author.is_staff and not message.author.is_superuser %}
+            <small class="text-muted">Staff</small>
+            {% else %}
+            {% endif %}: </strong>
+        <small class="text-muted">{{message.created}}</small>
+    </div>
+    <p>{{message.body}}</p>
+</div>
+{% endif %}
