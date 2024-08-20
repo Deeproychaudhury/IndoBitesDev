@@ -9,7 +9,7 @@ class EmailForm(forms.Form):
     email = forms.EmailField(required=True)
     username = forms.CharField(max_length=150, required=True)
 
-    def clean_email(self):
+    def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
@@ -20,11 +20,13 @@ class EmailForm(forms.Form):
 class OTPForm(forms.Form):
     otp = forms.CharField(max_length=6, required=True)
 
-    def clean_otp(self):
-        otp = self.cleaned_data['otp']
+    def clean(self):
+        cleaned_data = super().clean()
+        otp = cleaned_data.get('otp')
         email = self.initial['email']
+        username = self.initial['username']
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=email, username=username)
             otp_instance = OTP.objects.get(user=user, otp=otp)
             if not otp_instance.is_valid():
                 raise forms.ValidationError("This OTP has expired.")

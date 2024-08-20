@@ -198,7 +198,9 @@ class OTP(models.Model):
 
     def is_valid(self):
         # OTP is valid for 10 minutes
-        return self.created_at >= timezone.now() - datetime.timedelta(minutes=10)
+        now = timezone.now()
+        expiry_time = self.created_at + timedelta(minutes=10)
+        return now <= expiry_time
     def __str__(self):
         return f"{self.user.username} - {self.otp}"
     

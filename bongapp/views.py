@@ -7,7 +7,7 @@ from django.conf import settings
 from .tasks import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,logout,login 
-from .forms import Profileform,Userupdate,Chatform,NewGroupChatForm,ChatRoomEditForm,AvailabilityForm,MessageForm,CustomPasswordResetForm
+from .forms import Profileform,Userupdate,Chatform,NewGroupChatForm,ChatRoomEditForm,AvailabilityForm,MessageForm,CustomPasswordResetForm,EmailForm,OTPForm
 from .models import Profile,Product,OrderModel,ChatGroup,Groupmessage,Hall,HallBookings,MessageBoard,Message
 from django.core.mail import EmailMessage,send_mail
 from django.contrib.auth import get_user_model
@@ -27,15 +27,49 @@ from django.core.cache import cache
 import threading
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
+from django.utils.crypto import get_random_string
 # Create your views here.
+def send_otp_email(request):
+    if request.method == 'POST':
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
+            messages.info(request, f"An OTP has been sent to {email}.{username}")
+            user = User.objects.get(username=username, email=email)
+            otp = get_random_string(6, '0123456789')
+            message = f'Your OTP is {otp}'
+            OTP.objects.create(user=user,otp=otp)
+            subject = 'OTP for password reset'
+            message = f'Your OTP is {otp}'
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
+            return redirect('verify_otp', email=email, username=username)
+        else:
+            
+            messages.error(request, f"Invalid email or username.{form.errors}")
+    else:
+        form = EmailForm()
+    return render(request, 'registration/send_otp_email.html', {'form': form})
+
+def verify_otp(request, email, username):
+    if request.method == 'POST':
+        form = OTPForm(request.POST, initial={'email': email, 'username': username})
+        if form.is_valid():
+            user = User.objects.get(username=username,email=email)
+            return redirect('password_reset', email=email, username=username)
+    else:
+        form = OTPForm(initial={'email': email, 'username': username})
+    return render(request, 'registration/verify_otp.html', {'form': form})
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['email'] = self.kwargs['email']
+        initial['username'] = self.kwargs['username']
+        return initial
     form_class = CustomPasswordResetForm
     success_url = reverse_lazy('password_reset_done')
     template_name = 'registration/password_reset_form.html'
-
-
-
 
 def logoutuser(request):
     logout(request)

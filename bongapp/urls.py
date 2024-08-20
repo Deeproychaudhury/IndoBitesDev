@@ -35,12 +35,13 @@ urlpatterns = [
     path('deletechat/',views.deletechat,name='deletechat'),
     path('newsletter',views.messageboard_view,name='messageboard'),
     path('subscribe',views.subscribe,name='subscribe'),
-    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/<str:email>/<str:username>', CustomPasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    
-    
+    path('send_otp/', views.send_otp_email, name='send_otp'),
+    path('verify_otp/<str:email>/<str:username>/', views.verify_otp, name='verify_otp'),
+       
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # store image url

@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Register your models here.
-from .models import Profile,Product,OrderModel,ChatGroup,Groupmessage,Hall,HallBookings,MessageBoard,Message,Wishlist
+from .models import Profile,Product,OrderModel,ChatGroup,Groupmessage,Hall,HallBookings,MessageBoard,Message,Wishlist,OTP
 class ProductAdmin(admin.ModelAdmin):
     list_display=['product_name','category','price']
 class OrderModelAdmin(admin.ModelAdmin):
@@ -15,3 +15,4 @@ admin.site.register(Wishlist)
 admin.site.register(Message)
 admin.site.register(MessageBoard)
 admin.site.register(HallBookings)
+admin.site.register(OTP)
