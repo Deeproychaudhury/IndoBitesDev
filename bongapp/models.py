@@ -85,19 +85,6 @@ class OrderModel(models.Model):
     #         return True
     #     return False
 
-
-class Booking(models.Model):
-      name=models.TextField(default="no name")
-      day = models.DateField(default=datetime.today())
-      email=models.EmailField(default='ridhimansin@gmail.com')
-      description=models.CharField(max_length=250,default='no special request')
-      seats= models.CharField(max_length=100, choices=SEAT_CHOICES, default="2")
-      phone=models.IntegerField(default=0)
-     
-
-
-      def __str__(self) :
-          return self.name
 import shortuuid      
 class ChatGroup(models.Model):
     groupname=models.CharField(max_length=100,unique=True,blank=True,default=shortuuid.uuid)
@@ -189,3 +176,29 @@ class Message(models.Model):
         
     def __str__(self):
         return self.author.username
+    
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"
+
+
+class OTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'otp')
+
+    def is_valid(self):
+        # OTP is valid for 10 minutes
+        return self.created_at >= timezone.now() - datetime.timedelta(minutes=10)
+    def __str__(self):
+        return f"{self.user.username} - {self.otp}"
+    

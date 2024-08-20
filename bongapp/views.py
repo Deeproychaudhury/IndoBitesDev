@@ -7,8 +7,8 @@ from django.conf import settings
 from .tasks import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,logout,login 
-from .forms import Profileform,Userupdate,Bookform,Chatform,NewGroupChatForm,ChatRoomEditForm,AvailabilityForm,MessageForm
-from .models import Profile,Product,Booking,OrderModel,ChatGroup,Groupmessage,Hall,HallBookings,MessageBoard,Message
+from .forms import Profileform,Userupdate,Chatform,NewGroupChatForm,ChatRoomEditForm,AvailabilityForm,MessageForm,CustomPasswordResetForm
+from .models import Profile,Product,OrderModel,ChatGroup,Groupmessage,Hall,HallBookings,MessageBoard,Message
 from django.core.mail import EmailMessage,send_mail
 from django.contrib.auth import get_user_model
 from math import ceil
@@ -25,7 +25,16 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 import threading
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
 # Create your views here.
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    form_class = CustomPasswordResetForm
+    success_url = reverse_lazy('password_reset_done')
+    template_name = 'registration/password_reset_form.html'
+
+
 
 
 def logoutuser(request):
@@ -56,7 +65,6 @@ def loginuser(request):
                 messages.error(request, error_message)
                 return render(request, 'login.html')
     return render(request, 'login.html')
-
   
 def index(request):
     messageboard = get_object_or_404(MessageBoard, id=1)
@@ -411,27 +419,6 @@ def list_orders(request):
         return redirect('list_orders')
     return render(request, 'list_orders.html', {'orders': orders,'sign':sign})
 
-def booking(request):
-     if request.user.is_anonymous:
-       return redirect("/login")
-     if request.method == 'POST':
-        email=request.POST.get('email')
-        dateofuser=request.POST.get('date')
-    #    dateof = datetime.strptime(dateo,'%m-%d-%y')
-     #   dateofuser= datetime.strftime(dateof,'%Y-%m-%d')
-        descr=request.POST.get('descr')
-        seats=request.POST.get('select')
-        phone=request.POST.get('phone')
-        name2=request.POST.get('name')
-      
-        if Booking.objects.filter(day=dateofuser).count() < 1:
-           book=Booking(email=email,phone=phone,name=name2,seats=seats,description=descr,day=dateofuser)
-           book.save()
-           messages.success(request, "Appointment Saved!")
-           return redirect("/prof")
-     context={'seats': ["2", "4","10","20", "30+(buffet)"
-                  ],}
-     return render(request,'profile.html',context)
 
 @login_required(login_url='/login')
 def chatview(request,chatroom_name='Public-chat'):
@@ -737,3 +724,4 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
+

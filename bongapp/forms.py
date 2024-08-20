@@ -3,13 +3,52 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
 from django.forms import TextInput,EmailInput,ImageField
+from django.contrib.auth.forms import *
 
-class Bookform(forms.ModelForm):
-   date=forms.DateField()
+class EmailForm(forms.Form):
+    email = forms.EmailField(required=True)
+    username = forms.CharField(max_length=150, required=True)
 
-   class Meta:
-      model=Booking
-      fields=['date']
+    def clean_email(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        email = cleaned_data.get('email')
+        if not User.objects.filter(username=username,email=email).exists():
+            raise forms.ValidationError("There is no user associated with this email address.")
+        return cleaned_data
+
+class OTPForm(forms.Form):
+    otp = forms.CharField(max_length=6, required=True)
+
+    def clean_otp(self):
+        otp = self.cleaned_data['otp']
+        email = self.initial['email']
+        try:
+            user = User.objects.get(email=email)
+            otp_instance = OTP.objects.get(user=user, otp=otp)
+            if not otp_instance.is_valid():
+                raise forms.ValidationError("This OTP has expired.")
+        except OTP.DoesNotExist:
+            raise forms.ValidationError("Invalid OTP.")
+        return otp
+
+class CustomPasswordResetForm(PasswordResetForm):
+    username = forms.CharField(max_length=150, required=True)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        email = cleaned_data.get('email')
+
+        if not User.objects.filter(username=username, email=email).exists():
+            raise forms.ValidationError("There is no user with this username and email combination.")
+        
+        return cleaned_data
+
+    def get_users(self, email):
+        username = self.cleaned_data['username']
+        return User.objects.filter(username=username, email=email)
+
     
 class Chatform(forms.ModelForm):
     class Meta:

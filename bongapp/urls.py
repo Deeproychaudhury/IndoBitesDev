@@ -2,6 +2,8 @@ from bongapp import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path,include
+from .views import CustomPasswordResetView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("",views.index,name="home"),
@@ -9,7 +11,6 @@ urlpatterns = [
     path("logout",views.logoutuser,name='logoutuser'),
     path("signin",views.handlesignin,name='handlesignin'),
     path("prof/<str:username>/",views.prof,name='prof'),
-    path("booking",views.booking,name='booking'),
     path("menu",views.menu,name='menu'),
     path('add_to_cart', views.add_to_cart, name='add_to_cart'),
     path("cart",views.cart,name='cart'),
@@ -34,8 +35,12 @@ urlpatterns = [
     path('deletechat/',views.deletechat,name='deletechat'),
     path('newsletter',views.messageboard_view,name='messageboard'),
     path('subscribe',views.subscribe,name='subscribe'),
+    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
-    path('dashboard',views.dashboard,name='dashboard'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # store image url
