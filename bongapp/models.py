@@ -5,6 +5,7 @@ from PIL import Image
 from shortuuid.django_fields import ShortUUIDField
 from datetime import timedelta
 from django.utils import timezone
+from PIL import Image
 REVIEW_CHOICES = (
     ("1 star", "1 star"),
     ("2 star", "2 star"),
@@ -101,10 +102,23 @@ class Groupmessage(models.Model):
     group=models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
     author=models.ForeignKey(User,on_delete=models.CASCADE)  
     body=models.CharField(max_length=500,null=True)
+    file = models.FileField(upload_to='files/', blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)  
 
     def __str__(self):
-        return f'{self.author.username} : {self.body}'
+        if self.body:
+         return f'{self.author.username} : {self.body}'
+        elif self.file:
+         return f'{self.author.username} : {self.file}'
+    
+    @property    
+    def is_image(self):
+        try:
+            image = Image.open(self.file) 
+            image.verify()
+            return True 
+        except:
+            return False
     
     class Meta:
         ordering=['-created']

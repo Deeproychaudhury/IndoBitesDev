@@ -44,6 +44,7 @@ urlpatterns = [
     path('wishlist',views.makeWishlist,name='wishlist'),
     path('remove_wishlist/<int:id>',views.removeWishlist,name='remove_wishlist'),
     path('display_wishlist',views.displayWishlist,name='display_wishlist'),
+    path('chat/fileupload/<chatroom_name>',views.chatfileupload,name='chatfileupload'),
        
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

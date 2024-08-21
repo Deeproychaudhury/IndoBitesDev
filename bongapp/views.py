@@ -28,6 +28,8 @@ import threading
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 # Create your views here.
 def send_otp_email(request):
     if request.method == 'POST':
@@ -782,3 +784,17 @@ def removeWishlist(request, product_id):
     wishlist.delete()
     messages.success(request, "Product removed from wishlist")
     return redirect('display_wishlist')
+
+def chatfileupload(request,chatroom_name):
+    chat_group = get_object_or_404(ChatGroup, groupname=chatroom_name)
+    if request.method == 'POST' and request.FILES['file']:
+        file = request.FILES['file']
+        message = Groupmessage.objects.create(author=request.user, group=chat_group, file=file)
+        channel_layer = get_channel_layer()
+        event={
+            'type':'message_handler',
+            'message_id': message.id
+        }
+        async_to_sync(channel_layer.group_send)(chatroom_name,event)
+        return HttpResponse()
+    return HttpResponse()

@@ -154,7 +154,7 @@
         </nav>
     </header>
 
-    <div class="container" style="background-image: conic-gradient(#cfa4d7, #dbd2a0, #9eda99, #acc4e4, #a37a7a); ">
+    <div class="container" style="background-image: conic-gradient(#cfa4d7, #dbd2a0, #9eda99, #acc4e4, #a37a7a);">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card" style="background-color: #dcdbdcc8;">
@@ -213,7 +213,7 @@
                         {% include 'chat_message.html' %}
                         {% endfor %}
                     </div>
-                    <form id="chat-container-form" class="card-footer d-flex align-items-center" hx-ext="ws" ws-connect="/ws/chatroom/{{chatroom_name}}" ws-send _="on htmx:wsAfterSend reset()  me">
+                    <form id="chat-container-form" class="card-footer d-flex align-items-center " hx-ext="ws" ws-connect="/ws/chatroom/{{chatroom_name}}" ws-send _="on htmx:wsAfterSend reset()  me">
                         {% csrf_token %}
                         <div class="input-group flex-grow-1">
                             {{ form.body }}
@@ -222,12 +222,27 @@
                             </div>-->
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
+                    <div class="dropdown">
+                        <button class="main-btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <form id="chat-container-form" class="dropdown-menu card-footer bg-light" aria-labelledby="dropdownMenuButton1" enctype="multipart/form-data" hx-post="{% url 'chatfileupload' chat_group.groupname %}" hx-target="#chat-container" hx-swap="beforeend" _="on htmx:wsAfterSend reset()  me">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="file" name="file" id="file" class="form-control-lg">
+                                <div class="input-group-append">
+                                    <button class="btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div> <!-- This div was missing -->
+                        </form> <!-- This form tag was missing -->
+                    </div>
+                </div> <!-- Closing card div -->
+            </div> <!-- Closing col-md-8 div -->
+        </div> <!-- Closing row div -->
+    </div> <!-- Closing container div -->
 
-    </div>
-    <footer id="footer" hx-ext="ws" ws-connect="/ws/online-status/">
+
+
+    <footer id=" footer" hx-ext="ws" ws-connect="/ws/online-status/">
         <div class="footer">
             <div class="container">
                 <div class="row">
@@ -244,9 +259,11 @@
     </footer>
 
     <script>
-        function scrollToBottom() {
-            const container = document.getElementById('chat-container');
-            container.scrollTop = container.scrollHeight;
+        function scrollToBottom(time = 0) {
+            setTimeout(() => {
+                const container = document.getElementById('chat-container');
+                container.scrollTop = container.scrollHeight;
+            }, time);
         }
         scrollToBottom();
         document.getElementById("copyButton").addEventListener("click", function () {
