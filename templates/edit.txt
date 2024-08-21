@@ -334,3 +334,14 @@ ws-send _="on htmx:wsAfterSend reset()  me then call hideTypingIndicator()">
           font-size: 2.25rem;
         }
       }
+
+
+
+<form action="/add_to_cart" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="obj_id" value="{{obj.id}}">
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm me-2" style="max-width: 150px;">
+                                        <button class="main-btn btn btn-danger btn-sm" type="submit">Order Now</button>
+                                    </div>
+                                </form>

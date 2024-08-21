@@ -41,6 +41,9 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('send_otp/', views.send_otp_email, name='send_otp'),
     path('verify_otp/<str:email>/<str:username>/', views.verify_otp, name='verify_otp'),
+    path('wishlist',views.makeWishlist,name='wishlist'),
+    path('remove_wishlist/<int:id>',views.removeWishlist,name='remove_wishlist'),
+    path('display_wishlist',views.displayWishlist,name='display_wishlist'),
        
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

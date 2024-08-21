@@ -38,7 +38,6 @@ def send_otp_email(request):
             messages.info(request, f"An OTP has been sent to {email}.{username}")
             user = User.objects.get(username=username, email=email)
             otp = get_random_string(6, '0123456789')
-            message = f'Your OTP is {otp}'
             OTP.objects.create(user=user,otp=otp)
             subject = 'OTP for password reset'
             message = f'Your OTP is {otp}'
@@ -46,7 +45,7 @@ def send_otp_email(request):
             return redirect('verify_otp', email=email, username=username)
         else:
             
-            messages.error(request, f"Invalid email or username.{form.errors}")
+            messages.error(request, f"Invalid email or username.")
     else:
         form = EmailForm()
     return render(request, 'registration/send_otp_email.html', {'form': form})
@@ -759,3 +758,27 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', context)
 
+@login_required(login_url='/login')
+@csrf_exempt
+def makeWishlist(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        product = Product.objects.get(id=product_id)
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+        if not created:
+            messages.error(request, "Product already in wishlist")
+        else:
+            messages.success(request, "Product added to wishlist")
+    return redirect('menu')
+
+def displayWishlist(request):
+    wishlist = Wishlist.objects.filter(user=request.user)
+    return render(request, 'wishlist.html', {'wishlist': wishlist})
+
+def removeWishlist(request, product_id):
+    product_id = request.POST.get('product_id')
+    product = Product.objects.get(id=product_id)
+    wishlist = Wishlist.objects.get(user=request.user, product=product)
+    wishlist.delete()
+    messages.success(request, "Product removed from wishlist")
+    return redirect('display_wishlist')
