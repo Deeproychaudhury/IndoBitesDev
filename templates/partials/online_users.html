@@ -31,9 +31,11 @@
         <a class="dropdown-item" href="{% url 'new-groupchat' %}">Create GroupChat<i class="fa-solid fa-users-line"></i></a>
         {% for chatroom in user.chat_groups.all %}
         {% if chatroom.groupchat_name %}
-        <a class="dropdown-item" href="{% url 'chatroom' chatroom.groupname %}">{% if chatroom.users_online.all and user not in chatroom.users_online.all or chatroom.users_online.count > 1 %}
+        <a class="dropdown-item" href="{% url 'chatroom' chatroom.groupname %}">
+            {% if chatroom.users_online.all and user not in chatroom.users_online.all or chatroom.users_online.count > 1 %}
             <span class="green-circle"></span>
-            {% endif %}{{chatroom.groupchat_name}}</a>
+            {% endif %}
+            {{chatroom.groupchat_name}}</a>
         {% endif %}
         {% endfor %}
     </div>

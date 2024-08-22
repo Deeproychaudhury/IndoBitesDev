@@ -32,7 +32,7 @@ class OTPForm(forms.Form):
                 raise forms.ValidationError("This OTP has expired.")
         except OTP.DoesNotExist:
             raise forms.ValidationError("Invalid OTP.")
-        return otp
+        return cleaned_data
 
 class CustomPasswordResetForm(PasswordResetForm):
     username = forms.CharField(max_length=150, required=True)

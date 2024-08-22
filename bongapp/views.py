@@ -57,6 +57,8 @@ def verify_otp(request, email, username):
         form = OTPForm(request.POST, initial={'email': email, 'username': username})
         if form.is_valid():
             user = User.objects.get(username=username,email=email)
+            otp=OTP.objects.get(user=user,otp=form.cleaned_data['otp'])
+            otp.delete()
             return redirect('password_reset', email=email, username=username)
     else:
         form = OTPForm(initial={'email': email, 'username': username})

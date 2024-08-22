@@ -89,7 +89,7 @@
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         {% for members in chat_group.members.all%}
         <a class="dropdown-item" style="text-decoration: none; color: black;" href="{% url 'prof' members.username %}">
-            {% if members in chat_group.users_online.all %}
+            {% if members in chat_group.users_online.all and members != user %}
             <span class="green-circle"></span>
             {% else %}
             <span class="grey-circle"></span>

@@ -94,7 +94,7 @@
         .chat-container {
             height: 600px;
             overflow-y: scroll;
-            background-color: #ffffff97;
+            background-color: #eeeeee97;
         }
 
         .form-control-lg {
@@ -154,7 +154,7 @@
         </nav>
     </header>
 
-    <div class="container" style="background-image: conic-gradient(#cfa4d7, #dbd2a0, #9eda99, #acc4e4, #a37a7a);">
+    <div class="container w-100" style="background-image: conic-gradient(#cfa4d7, #dbd2a0, #9eda99, #acc4e4, #a37a7a);">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card" style="background-color: #dcdbdcc8;">
@@ -218,14 +218,15 @@
                         <div class="input-group flex-grow-1">
                             {{ form.body }}
                             <!--   <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+                                <button class="btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
                             </div>-->
                         </div>
                     </form>
                     <div class="dropdown">
                         <button class="main-btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Send <i class="fa-solid fa-paperclip"></i>
                         </button>
-                        <form id="chat-container-form" class="dropdown-menu card-footer bg-light" aria-labelledby="dropdownMenuButton1" enctype="multipart/form-data" hx-post="{% url 'chatfileupload' chat_group.groupname %}" hx-target="#chat-container" hx-swap="beforeend" _="on htmx:wsAfterSend reset()  me">
+                        <form id="chat-container-form" class="dropdown-menu card-footer bg-light" aria-labelledby="dropdownMenuButton1" enctype="multipart/form-data" hx-post="{% url 'chatfileupload' chat_group.groupname %}" hx-target="#chat-container" hx-swap="beforeend" _="on htmx:beforeSend reset()  me">
                             {% csrf_token %}
                             <div class="input-group">
                                 <input type="file" name="file" id="file" class="form-control-lg">
