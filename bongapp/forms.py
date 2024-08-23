@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from .models import *
 from django.forms import TextInput,EmailInput,ImageField
 from django.contrib.auth.forms import *
-
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 class EmailForm(forms.Form):
     email = forms.EmailField(required=True)
     username = forms.CharField(max_length=150, required=True)
@@ -106,14 +106,15 @@ class Userupdate(forms.ModelForm):
                 }),
             'email': EmailInput(attrs={
                 'class': "form-control", 
-                'placeholder': 'Email'
-                })
+                'placeholder': 'Email',
+                'required': True
+                }),
         }
 class Profileform(forms.ModelForm):
     phone = forms.IntegerField(widget=forms.NumberInput(attrs={
         'class': "form-control",
         'placeholder': 'Phone'
-    }))
+    }), required=True,validators=[ RegexValidator( regex='^\d{9,15}$', message='Plz use a proper phone number', code='nomatch')])
     review = forms.CharField(widget=forms.TextInput(attrs={
         'class': "form-control",
         'placeholder': 'Review'
@@ -121,11 +122,11 @@ class Profileform(forms.ModelForm):
     address = forms.CharField(widget=forms.TextInput(attrs={
         'class': "form-control",
         'placeholder': 'Address'
-    }))
-    state = forms.CharField(widget=forms.TextInput(attrs={
+    }),validators=[ RegexValidator( regex='^[a-zA-Z0-9\s,.\-]*$', message='Plz use a proper address', code='nomatch')])
+    state = forms.CharField(required= True,widget=forms.TextInput(attrs={
         'class': "form-control",
-        'placeholder': 'State'
-    }))
+        'placeholder': 'State',
+    }),validators=[ RegexValidator( regex='^[a-zA-Z\s]*$', message='Plz use a proper state', code='nomatch')])
     image = forms.ImageField(required=False, widget=forms.FileInput(attrs={
         'class': "form-control"
     }))

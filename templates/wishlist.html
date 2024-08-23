@@ -59,6 +59,7 @@
     </div>
     {% endfor %}
     {% endif %}
+    {% if wishlist %}
     <section id="explore-food" class="py-5">
         <div class="container">
             <div class="section-title text-center mb-4">
@@ -92,6 +93,22 @@
             </div>
         </div>
     </section>
+    {% else %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container mt-5 mb-5">
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">No items in your wishlist</h4>
+            <p>Click on the heart icon to add items to your wishlist</p>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    {% endif %}
     <footer id="footer">
         <div class="footer py-5">
             <div class="container">

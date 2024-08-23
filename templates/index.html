@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="Description" content="Enter your description here" />
+  <link rel="icon" href="{% static 'logo1.png' %}" type="image/png">
   <title>Indo Bites | Home </title>
   <!-- bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -55,6 +56,10 @@
     .banquet-services .text-center i {
       display: block;
       margin-bottom: 8px;
+    }
+
+    a {
+      color: rgb(197, 191, 191);
     }
   </style>
 </head>
@@ -211,7 +216,7 @@
               <div class="card-body p-5 text-content">
                 <h2 class="card-title text-center mb-4">Reserve Our Exquisite Halls</h2>
                 <p class="text-center mb-4" style="color:rgb(243, 243, 243)">Make your special day even more memorable with our beautiful venues.</p>
-                <p class="text-center mb-4" style="color:rgb(243, 243, 243)"> For more details go to <a href="/hallbooking">HallBooking</a></p>
+                <p class="text-center mb-4" style="color:rgb(243, 243, 243)"> For more details go to <a href="/hallbooking" class="white-btn">HallBooking</a></p>
                 <form method="post" action="/hallbooking">
                   {% csrf_token %}
                   <div class="mb-3">
@@ -579,6 +584,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       const slideRightSection = document.querySelector('#slide-right');
       const slideSection = document.querySelector('#about');
+      const slidingSection = document.querySelector('#faq');
 
       function handleScroll() {
         const sectionPosition = slideRightSection.getBoundingClientRect().top;
@@ -598,10 +604,20 @@
           window.removeEventListener('scroll', handeScroll); // Remove event listener after animation
         }
       }
+      function handleSroll() {
+        const sectionPosition = slidingSection.getBoundingClientRect().top;
+        const screenPosition = window.innerHeight / 1.2;
+
+        if (sectionPosition < screenPosition) {
+          slidingSection.classList.add('slide-right');
+          window.removeEventListener('scroll', handleSroll); // Remove event listener after animation
+        }
+      }
 
 
       window.addEventListener('scroll', handleScroll);
       window.addEventListener('scroll', handeScroll);
+      window.addEventListener('scroll', handleSroll);
     });  
   </script>
 </body>

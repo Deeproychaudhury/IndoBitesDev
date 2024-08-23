@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from environ import Env
+
+env = Env()
+env.read_env()
+
+ENVIRONMENT=env('ENVIRONMENT', default='production')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +27,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-has&n20z%2o%o+qncn4kd@jf#$9_=r+7s0vyi(qr=qk*-717#i'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ENVIRONMENT == 'development':
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','*']
+
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -43,7 +55,14 @@ INSTALLED_APPS = [
     'fontawesome',
     'django_htmx',
     'django_celery_beat',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'bongeats.urls'
@@ -76,11 +96,26 @@ TEMPLATES = [
 #WSGI_APPLICATION = 'bongeats.wsgi.application'
 ASGI_APPLICATION = 'bongeats.asgi.application'
 
-CHANNEL_LAYERS = {
-   "default": {
-       "BACKEND": "channels.layers.InMemoryChannelLayer"
-   }
-}
+# CHANNEL_LAYERS = {
+#    "default": {
+#        "BACKEND": "channels.layers.InMemoryChannelLayer"
+#    }
+# }
+if DEBUG:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [('redis://default:FzTIveiCBMkIeBsCMLWOPBScAfwzUDin@monorail.proxy.rlwy.net:20263')],
+            },
+        },
+    }    
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -169,10 +204,31 @@ MEDIA_URL='/media/'
 STRIPE_PUBLIC_KEY = 'pk_test_51PjkGyP8vW4nFj074MLBrldxHjLcsmGoJCPyUL9aew81a1Ob59swiSMZdmcv1s1E7XJjo0toVYoRkKE6xj7QDnQ300fkn8MblW'
 STRIPE_SECRET_KEY = 'sk_test_51PjkGyP8vW4nFj07CiFE4QR1ZG9vJ9cZljHQVm80XckO24Rwe0JrlnuwEDIOVit8jDl5P7D4eQMA4dmWPQB8qkgi00v4VxVw3x'
 STRIPE_WEBHOOK_SECRET="whsec_65f6f35d4e47e750e587e997ff8d45c5a85cf516031e46f02dd0b8bc374efa2a"
-STRIPE_WEBHOOK_SECRET_KEY=""
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_RESULT_EXTENDED = True
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'superuser', 'bongeats', 'bongeatsadmin', 'bongeatsuser', 'bongeatsadminuser','profile','login','logout','signup','register','password','reset','account','prof']

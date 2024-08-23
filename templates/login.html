@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indo Bites | Login</title>
+  <link rel="icon" href="{% static 'logo1.png' %}" type="image/png">
 
   <!-- login and create account css -->
   <link rel="stylesheet" href="{% static 'login.css' %}">
@@ -59,14 +60,6 @@
                       <label class="form-label" for="password">Password</label>
                     </div>
 
-                    <!-- Checkbox -->
-                    <div class="form-check d-flex justify-content-center mb-4">
-                      <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
-                      <label class="form-check-label" style="color:#A82C48;" for="form2Example33">
-                        Subscribe to our newsletter
-                      </label>
-                    </div>
-
                     <!-- Error message display -->
                     <div id="error-message" class="alert alert-danger" style="display:none;"></div>
 
@@ -93,8 +86,10 @@
                       <button type="button" disabled class="btn btn-link btn-floating mx-1" style="background-color: #A82C48; color: azure;">
                         <i class="fab fa-facebook-f"></i>
                       </button>
-                      <button type="button" disabled class="btn btn-link btn-floating mx-1" style="background-color: #A82C48; color: azure;">
-                        <i class="fab fa-google"></i>
+                      <button type="button" class="btn btn-link btn-floating mx-1" style="background-color: #A82C48; color: azure;">
+                        {% load socialaccount %}
+                        <a href="{% provider_login_url 'google' %}?next=/" style="color: azure;"><i class="fab fa-google"></i></a>
+
                       </button>
                       <button type="button" disabled class="btn btn-link btn-floating mx-1" style="background-color: #A82C48; color: azure;">
                         <i class="fab fa-twitter"></i>
